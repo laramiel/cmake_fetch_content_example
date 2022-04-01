@@ -120,8 +120,7 @@ add_library(nlohmann_json INTERFACE)
 target_include_directories(nlohmann_json INTERFACE
       "${com_github_nlohmann_json_SOURCE_DIR}/single_include")
 
-add_library(nlohmann_json::nlohmann_json ALIAS nlohmann_json)
-
+maybe_add_alias(nlohmann_json nlohmann_json::nlohmann_json)
 
 
 # Include Abseil using FetchContent.
