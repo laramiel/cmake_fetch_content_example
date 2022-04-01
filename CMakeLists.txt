@@ -31,20 +31,6 @@ function(maybe_add_alias my_target my_alias)
 endfunction()
 
 
-# check_absl_target(target)
-#   Attempts to add an alias for an absl namespace target
-#   before running check_target(target)
-function(check_absl_target my_target)
-  string(FIND ${my_target} "::" _has_namespace)
-  if(${_has_namespace})
-    string(REPLACE "::" "_" _my_alias ${my_target})
-    maybe_add_alias(${my_target} ${_my_alias})
-  endif(${_has_namespace})
-
-  check_target("${my_target}")
-endfunction()
-
-
 # dump_cmake_variables()
 #   Dumps all the CMAKE variables.
 function(dump_cmake_variables)
@@ -97,12 +83,22 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 
 find_package(Threads REQUIRED)
-find_package(GTest REQUIRED)
+
+
+####
+# Install GTest using FetchContent.
+
+FetchContent_Declare(
+  com_google_googletest
+  URL        https://github.com/google/googletest/archive/3e0e32ba300ce8afe695ad3ba7e81b21b7cf237a.zip
+  URL_HASH   SHA256=84bf0acb4a7ed172ffdd806bb3bef76ad705f4ea63ac7175cd7c86df2a017d17)
+FetchContent_MakeAvailable(com_google_googletest)
 
 check_target(GTest::gtest)
 check_target(GTest::gtest_main)
 check_target(GTest::gmock)
 check_target(GTest::gmock_main)
+
 
 
 # Include nlohmann_json using FetchContent
@@ -132,6 +128,7 @@ add_library(nlohmann_json::nlohmann_json ALIAS nlohmann_json)
 
 set(ABSL_USE_EXTERNAL_GOOGLETEST ON CACHE INTERNAL "" FORCE)
 set(ABSL_BUILD_TESTING OFF CACHE INTERNAL "" FORCE)
+set(ABSL_FIND_GOOGLETEST OFF CACHE INTERNAL "" FORCE)
 set(ABSL_PROPAGATE_CXX_STD ON CACHE INTERNAL "" FORCE)
 
 FetchContent_Declare(
@@ -143,79 +140,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(com_google_absl)
 
 
+# The Abseil library aliases are not installed via FetchContent
 
-
-
-
-check_absl_target(absl::algorithm)
-check_absl_target(absl::algorithm_container)
-check_absl_target(absl::base)
-check_absl_target(absl::core_headers)
-check_absl_target(absl::log_severity)
-check_absl_target(absl::dynamic_annotations)
-check_absl_target(absl::cleanup)
-check_absl_target(absl::btree)
-check_absl_target(absl::fixed_array)
-check_absl_target(absl::flat_hash_map)
-check_absl_target(absl::flat_hash_set)
-check_absl_target(absl::inlined_vector)
-check_absl_target(absl::node_hash_map)
-check_absl_target(absl::node_hash_set)
-check_absl_target(absl::debugging)
-check_absl_target(absl::failure_signal_handler)
-check_absl_target(absl::leak_check)
-check_absl_target(absl::leak_check_disable)
-check_absl_target(absl::stacktrace)
-check_absl_target(absl::symbolize)
-check_absl_target(absl::flags)
-check_absl_target(absl::flags_commandlineflag)
-check_absl_target(absl::flags_config)
-check_absl_target(absl::flags_marshalling)
-check_absl_target(absl::flags_parse)
-check_absl_target(absl::flags_reflection)
-check_absl_target(absl::flags_usage)
-check_absl_target(absl::bind_front)
-check_absl_target(absl::function_ref)
-check_absl_target(absl::hash)
-check_absl_target(absl::hash_testing)
-check_absl_target(absl::memory)
-check_absl_target(absl::meta)
-check_absl_target(absl::type_traits)
-check_absl_target(absl::bits)
-check_absl_target(absl::int128)
-check_absl_target(absl::numeric)
-check_absl_target(absl::numeric_representation)
-check_absl_target(absl::exponential_biased)
-check_absl_target(absl::periodic_sampler)
-check_absl_target(absl::sample_recorder)
-check_absl_target(absl::random_bit_gen_ref)
-check_absl_target(absl::random_distributions)
-check_absl_target(absl::random_mocking_bit_gen)
-check_absl_target(absl::random_random)
-check_absl_target(absl::random_seed_gen_exception)
-check_absl_target(absl::random_seed_sequences)
-check_absl_target(absl::status)
-check_absl_target(absl::statusor)
-check_absl_target(absl::cord)
-check_absl_target(absl::cord_test_helpers)
-check_absl_target(absl::str_format)
-check_absl_target(absl::strings)
-check_absl_target(absl::synchronization)
-check_absl_target(absl::civil_time)
-check_absl_target(absl::time)
-check_absl_target(absl::time_zone)
-check_absl_target(absl::any)
-check_absl_target(absl::bad_any_cast)
-check_absl_target(absl::bad_optional_access)
-check_absl_target(absl::bad_variant_access)
-check_absl_target(absl::compare)
-check_absl_target(absl::optional)
-check_absl_target(absl::span)
-check_absl_target(absl::variant)
-check_absl_target(absl::utility)
-check_absl_target(absl::base)
-check_absl_target(absl::base)
-
+maybe_add_alias(absl_strings absl::strings)
 
 # dump_cmake_variables()
 # dump_cmake_targets(${CMAKE_BINARY_DIR})
