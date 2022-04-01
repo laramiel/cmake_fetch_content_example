@@ -21,7 +21,7 @@ function(check_target my_target)
 endfunction()
 
 # maybe_add_alias(target alias)
-#   Attempts to add an alias for a target if the target does not exist.
+#   Attempts to add an alias for a target if the alias does not exist.
 function(maybe_add_alias my_target my_alias)
   if(NOT TARGET ${my_alias})
     if(TARGET ${my_target})
